@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Standard PC Building Service - Techmatics PCs</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Override or add product-specific styles */
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0 1rem 2rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.9rem;
+      margin: 1rem 0;
+      color: var(--muted);
+    }
+    .breadcrumb a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .breadcrumb a:hover {
+      color: var(--accent);
+    }
+
+    .product-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      max-width: var(--max-width);
+      margin: auto;
+      align-items: flex-start;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #333;
+    }
+
+    .product-image {
+      flex: 1 1 320px;
+      max-width: 450px;
+      background: #222;
+      padding: 1rem;
+      border-radius: var(--radius);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .product-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+    }
+
+    .product-details {
+      flex: 1 1 350px;
+      color: var(--text);
+    }
+
+    .product-details h1 {
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+
+    .sku {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      font-weight: 400;
+    }
+
+    .price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .quantity-label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .quantity-input {
+      width: 90px;
+      height: 35px;
+      font-size: 1rem;
+      padding: 0 0.5rem;
+      border-radius: var(--radius);
+      border: 1px solid #444;
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .quantity-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Quantity increment/decrement buttons style */
+    .qty-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      width: 30px;
+      height: 30px;
+      font-size: 1.25rem;
+      cursor: pointer;
+      border-radius: var(--radius);
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .qty-btn:active {
+      opacity: 0.85;
+    }
+
+    .buy-btn {
+      background: #007bff;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.8rem 1.2rem;
+      cursor: pointer;
+      width: 100%;
+      max-width: 250px;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .buy-btn:hover {
+      opacity: 0.9;
+    }
+
+    .payment-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-weight: 700;
+      margin: 1rem 0 0.5rem;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.2rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .description-content,
+    .shipping-content,
+    .refund-content {
+      margin-bottom: 1rem;
+    }
+
+    .description-content ul {
+      padding-left: 1.3rem;
+      list-style-type: disc;
+    }
+
+    /* Accordion toggle */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      color: var(--text);
+    }
+    .accordion-active .accordion-content {
+      max-height: 300px; /* adjust as needed */
+    }
+
+    /* Social icons container */
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .social-icons a {
+      color: var(--text);
+      font-size: 1.5rem;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .social-icons a:hover {
+      color: var(--accent);
+    }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .product-container {
+        flex-direction: column;
+      }
+      .product-image,
+      .product-details {
+        max-width: 100%;
+        flex: none;
+      }
+      .buy-btn {
+        max-width: 100%;
+      }
+    }
+  </style>
+
+  <!-- Load FontAwesome for icons -->
+  <script src="https://kit.fontawesome.com/1a0b1c92c1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <nav class="breadcrumb">
+    <a href="index.html">Home</a> / <span>Standard PC Building Service</span>
+  </nav>
+
+  <main class="product-container">
+    <div class="product-image">
+      <img src="assets/standardpcbuild.png" alt="Techmatics Tools Logo" />
+    </div>
+
+    <div class="product-details">
+      <h1>Standard PC Building Service</h1>
+      <div class="sku">SKU: 364215376135191</div>
+      <div class="price">£49.95</div>
+
+      <label for="quantity" class="quantity-label">Quantity *</label>
+      <div class="quantity-container">
+        <button class="qty-btn" id="qty-decrease">−</button>
+        <input
+          type="number"
+          id="quantity"
+          class="quantity-input"
+          value="1"
+          min="1"
+          max="99"
+          aria-label="Quantity"
+        />
+        <button class="qty-btn" id="qty-increase">+</button>
+      </div>
+
+      <button class="buy-btn" id="buy-button" onclick="window.location.href='https://buy.stripe.com/fZe7sE8DxdG0gSc3ce'">Purchase Now</button>
+      <div class="payment-note">
+        Pressing "Buy" will take you to an encrypted payment handler, Stripe.
+      </div>
+
+      <div class="section-title" id="desc-toggle">DESCRIPTION <span id="desc-toggle-symbol">−</span></div>
+      <div class="accordion-content description-content">
+        <p>This service includes:</p>
+        <ul>
+          <li>A PC Build tarilored to your needs.</li>
+          <li>Cable management.</li>
+          <li>Revisions or recommendations to your PCPartpicker list to suit your needs.</li>
+        </ul>
+      </div>
+
+      <div class="section-title" id="ship-toggle">SHIPPING INFO <span id="ship-toggle-symbol">+</span></div>
+      <div class="accordion-content shipping-content">
+        <p>Shipping information will be updated soon.</p>
+      </div>
+
+      <div class="section-title" id="refund-toggle">RETURN & REFUND POLICY <span id="refund-toggle-symbol">+</span></div>
+      <div class="accordion-content refund-content">
+        <p>Return and refund policy details will be updated soon.</p>
+      </div>
+
+      <div class="social-icons" aria-label="Share on social media">
+        <!-- <a href="https://facebook.com" target="_blank" aria-label="Facebook" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://pinterest.com" target="_blank" aria-label="Pinterest" rel="noopener"><i class="fab fa-pinterest-p"></i></a>
+        <a href="https://wa.me/" target="_blank" aria-label="WhatsApp" rel="noopener"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://twitter.com" target="_blank" aria-label="Twitter" rel="noopener"><i class="fab fa-twitter"></i></a> -->
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Quantity controls
+    const qtyInput = document.getElementById('quantity');
+    const btnIncrease = document.getElementById('qty-increase');
+    const btnDecrease = document.getElementById('qty-decrease');
+
+    btnIncrease.addEventListener('click', () => {
+      let current = parseInt(qtyInput.value);
+      if (current < 99) qtyInput.value = current + 1;
+    });
+
+    btnDecrease.addEventListener('click', () => {
+      let current = parseInt(qtyInput.value);
+      if (current > 1) qtyInput.value = current - 1;
+    });
+
+    // Accordion toggles
+    function toggleSection(toggleId, contentClass, symbolId) {
+      const toggle = document.getElementById(toggleId);
+      const content = document.querySelector(`.${contentClass}`);
+      const symbol = document.getElementById(symbolId);
+
+      toggle.addEventListener('click', () => {
+        const isActive = content.style.maxHeight && content.style.maxHeight !== '0px';
+        if (isActive) {
+          content.style.maxHeight = '0';
+          symbol.textContent = '+';
+        } else {
+          content.style.maxHeight = content.scrollHeight + 'px';
+          symbol.textContent = '−';
+        }
+      });
+    }
+
+    toggleSection('desc-toggle', 'description-content', 'desc-toggle-symbol');
+    toggleSection('ship-toggle', 'shipping-content', 'ship-toggle-symbol');
+    toggleSection('refund-toggle', 'refund-content', 'refund-toggle-symbol');
+
+    // Buy button functionality placeholder
+    document.getElementById('buy-button').addEventListener('click', () => {
+      alert('Redirecting to payment gateway...');
+      // Implement actual payment redirect here
+    });
+  </script>
+</body>
+</html>
