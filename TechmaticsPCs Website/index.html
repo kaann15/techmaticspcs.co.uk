@@ -1,39 +1,796 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Techmatics PCs - Home</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes - Your 5-Day Plan</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #38bdf8;
+            --success: #22c55e;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Search & Filters */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        input[type="search"] {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        input[type="search"]::placeholder {
+            color: var(--text-secondary);
+        }
+
+        select, button {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select:hover, button:hover {
+            background: #0ea5e9;
+            transform: translateY(-1px);
+        }
+
+        /* Recipe Cards Grid */
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .recipe-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(56,189,248,0.3);
+        }
+
+        .recipe-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .recipe-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .score-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .recipe-actions {
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            background: rgba(56,189,248,0.1);
+        }
+
+        .btn {
+            flex: 1;
+            background: var(--accent);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn.fav {
+            background: #f59e0b;
+        }
+
+        .btn.active {
+            background: var(--success);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 200;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        /* Recipe Detail */
+        .recipe-detail {
+            padding: 2rem;
+        }
+
+        .portions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .portions input {
+            width: 60px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .ingredients {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .ingredient {
+            background: rgba(56,189,248,0.1);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ingredient.checked {
+            background: rgba(34,197,94,0.2);
+            border-left-color: var(--success);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .steps {
+            counter-reset: step;
+        }
+
+        .step {
+            counter-increment: step;
+            background: rgba(34,197,94,0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            position: relative;
+        }
+
+        .step::before {
+            content: counter(step);
+            background: var(--success);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        /* Shopping List */
+        .shopping-list {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+        }
+
+        .shopping-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .shopping-group h4 {
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .portions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .recipe-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .recipe-card, .modal {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* PWA */
+        @media (display-mode: standalone) {
+            body { padding-bottom: env(safe-area-inset-bottom); }
+        }
+    </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="logo" href="index.html">
-         <img src="assets/techmaticsinverted.png" alt="Logo" />
-      <nav>
-        <ul>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="builds.html">Builds</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Recipes</h1>
+            <p class="tagline">5-Day High-Protein Dinner Plan • 2 Portions • Waitrose/Tesco</p>
+        </header>
 
-  <main class="container hero">
-    <div>
-      <h1>We Build Your Dream PC</h1>
-      <p>Custom-built systems with top-tier components, professional assembly, and post-purchase support.</p>
-      <a class="cta" href="services.html">View Services</a>
-    </div>
-    <img src="assets/custompcbuild.jpg" alt="Custom PC build">
-  </main>
+        <!-- Controls -->
+        <div class="controls">
+            <input type="search" id="search" placeholder="Search recipes (chicken, salmon...)">
+            <select id="filter">
+                <option value="">All Days</option>
+                <option value="1">Day 1</option>
+                <option value="2">Day 2</option>
+                <option value="3">Day 3</option>
+                <option value="4">Day 4</option>
+                <option value="5">Day 5</option>
+            </select>
+            <button id="showShopping">🛒 Shopping List</button>
+        </div>
 
-  <footer class="site-footer">
-    <p>© <span id="year"></span> Techmatics PCs — All rights reserved.</p>
-  </footer>
-  <script src="script.js"></script>
+        <!-- Recipes Grid -->
+        <div class="recipes-grid" id="recipesGrid">
+            <!-- Recipes populated by JS -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="recipeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="recipe-detail" id="modalContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Your 5 recipes as data
+        const recipes = [
+            {
+                id: 1,
+                title: "Turkish Chicken Rice Bowl",
+                day: "Day 1",
+                score: 85,
+                time: "45 min",
+                protein: 50,
+                calories: 900,
+                ingredients: [
+                    "400g chicken breast fillets",
+                    "300g basmati rice",
+                    "400g broccoli",
+                    "2 red peppers",
+                    "200g 0% Greek yogurt",
+                    "1 cucumber (cacık)",
+                    "Cumin, paprika, garlic"
+                ],
+                steps: [
+                    "Grill chicken with spices (15 min)",
+                    "Steam broccoli & peppers (10 min)",
+                    "Boil rice (20 min)",
+                    "Mix yogurt + cucumber for cacık",
+                    "Assemble bowls & serve hot"
+                ],
+                category: "chicken"
+            },
+            {
+                id: 2,
+                title: "Lean Beef Mince Tomato Stew",
+                day: "Day 2",
+                score: 87,
+                time: "40 min",
+                protein: 45,
+                calories: 880,
+                ingredients: [
+                    "300g 5% fat beef mince",
+                    "4 medium potatoes",
+                    "400g spinach",
+                    "2 tins chopped tomatoes",
+                    "2 onions",
+                    "3 garlic cloves",
+                    "Thyme, bay leaf"
+                ],
+                steps: [
+                    "Brown mince & onions (8 min)",
+                    "Add garlic (1 min)",
+                    "Add potatoes & tomatoes, simmer 30 min",
+                    "Stir spinach last 3 min",
+                    "Serve with crusty bread (optional)"
+                ],
+                category: "beef"
+            },
+            {
+                id: 3,
+                title: "Tagliatelle Turkey Ragu",
+                day: "Day 3",
+                score: 84,
+                time: "35 min",
+                protein: 48,
+                calories: 910,
+                ingredients: [
+                    "240g dry tagliatelle",
+                    "300g turkey mince",
+                    "400g courgette",
+                    "2 tins chopped tomatoes",
+                    "4 garlic cloves",
+                    "1 tsp oregano",
+                    "1 tbsp olive oil"
+                ],
+                steps: [
+                    "Brown turkey & garlic (8 min)",
+                    "Add courgette, cook 5 min",
+                    "Add tomatoes & oregano, simmer 20 min",
+                    "Boil tagliatelle",
+                    "Mix sauce with pasta"
+                ],
+                category: "turkey"
+            },
+            {
+                id: 4,
+                title: "Grilled Salmon Rice & Greens",
+                day: "Day 4",
+                score: 92,
+                time: "35 min",
+                protein: 46,
+                calories: 920,
+                ingredients: [
+                    "360g salmon fillet",
+                    "300g brown rice",
+                    "400g tenderstem broccoli",
+                    "2 lemons",
+                    "4 garlic cloves",
+                    "Sea salt & pepper",
+                    "1 tbsp olive oil"
+                ],
+                steps: [
+                    "Boil brown rice (30 min)",
+                    "Grill salmon 12 min/side",
+                    "Steam broccoli with garlic (8 min)",
+                    "Squeeze lemon over everything",
+                    "Plate rice + salmon + veg"
+                ],
+                category: "fish"
+            },
+            {
+                id: 5,
+                title: "Chicken Veggie Tagliatelle",
+                day: "Day 5",
+                score: 86,
+                time: "40 min",
+                protein: 48,
+                calories: 910,
+                ingredients: [
+                    "240g dry tagliatelle",
+                    "300g chicken breast",
+                    "400g mixed peppers",
+                    "200g mushrooms",
+                    "100g peas",
+                    "3 garlic cloves",
+                    "Fresh basil"
+                ],
+                steps: [
+                    "Boil tagliatelle (15 min)",
+                    "Sauté cubed chicken (12 min)",
+                    "Add peppers & mushrooms (8 min)",
+                    "Toss with peas & garlic",
+                    "Mix with pasta + basil"
+                ],
+                category: "chicken"
+            }
+        ];
+
+        // App state
+        let currentPortions = 2;
+        let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
+        let shoppingList = [];
+
+        // DOM elements
+        const searchInput = document.getElementById('search');
+        const filterSelect = document.getElementById('filter');
+        const recipesGrid = document.getElementById('recipesGrid');
+        const recipeModal = document.getElementById('recipeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.getElementById('closeModal');
+        const showShopping = document.getElementById('showShopping');
+
+        // Initialize
+        renderRecipes();
+        setupEventListeners();
+
+        function setupEventListeners() {
+            searchInput.addEventListener('input', debounce(renderRecipes, 300));
+            filterSelect.addEventListener('change', renderRecipes);
+            closeModal.addEventListener('click', closeModalFn);
+            recipeModal.addEventListener('click', (e) => {
+                if (e.target === recipeModal) closeModalFn();
+            });
+            showShopping.addEventListener('click', toggleShoppingList);
+        }
+
+        function renderRecipes() {
+            const query = searchInput.value.toLowerCase();
+            const filterDay = filterSelect.value;
+
+            const filtered = recipes.filter(recipe => {
+                const matchesSearch = recipe.title.toLowerCase().includes(query) ||
+                                    recipe.ingredients.some(ing => ing.toLowerCase().includes(query));
+                const matchesDay = !filterDay || recipe.day.includes(filterDay);
+                return matchesSearch && matchesDay;
+            });
+
+            recipesGrid.innerHTML = filtered.map(recipe => `
+                <div class="recipe-card" data-id="${recipe.id}">
+                    <div class="recipe-header">
+                        <div class="recipe-title">${recipe.title}</div>
+                        <div class="recipe-meta">
+                            <span>${recipe.day} • ${recipe.time}</span>
+                            <span>${recipe.protein}g protein</span>
+                            <span>${recipe.calories} kcal</span>
+                            <span class="score-badge">⭐ ${recipe.score}/100</span>
+                        </div>
+                    </div>
+                    <div class="recipe-actions">
+                        <button class="btn view-recipe">View Recipe</button>
+                        <button class="btn fav ${favourites.includes(recipe.id) ? 'active' : ''}" data-action="toggle-fav">
+                            ${favourites.includes(recipe.id) ? '❤️' : '🤍'}
+                        </button>
+                        <button class="btn" data-action="add-shopping">🛒 List</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add click listeners
+            document.querySelectorAll('.view-recipe').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const card = btn.closest('.recipe-card');
+                    showRecipeModal(card.dataset.id);
+                });
+            });
+
+            document.querySelectorAll('.recipe-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('.recipe-actions')) {
+                        showRecipeModal(card.dataset.id);
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-action="toggle-fav"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavourite(parseInt(e.target.closest('button').dataset.action.split('-')[2]));
+                });
+            });
+
+            document.querySelectorAll('[data-action="add-shopping"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(e.target.closest('.recipe-card').dataset.id);
+                    addToShoppingList(id);
+                });
+            });
+        }
+
+        function showRecipeModal(id) {
+            const recipe = recipes.find(r => r.id == id);
+            if (!recipe) return;
+
+            modalTitle.textContent = recipe.title;
+            currentPortions = 2; // Reset
+
+            const scaleFactor = currentPortions / 2;
+            const scaledIngredients = recipe.ingredients.map(ing => {
+                if (ing.match(/(\d+(?:\.\d+)?)(g|kg|ml|l)/i)) {
+                    return ing.replace(/(\d+(?:\.\d+)?)/, (match, num) => (num * scaleFactor).toFixed(0));
+                }
+                return ing;
+            });
+
+            modalContent.innerHTML = `
+                <div class="portions">
+                    <label>Portions: <input type="number" id="portionsInput" value="${currentPortions}" min="1" max="10"></label>
+                    <button class="btn" onclick="updatePortions()">Update</button>
+                </div>
+                
+                <div class="section">
+                    <h3>Ingredients (${currentPortions}x)</h3>
+                    <div class="ingredients" data-recipe-id="${id}">
+                        ${scaledIngredients.map((ing, i) => `<div class="ingredient" data-ing="${i}">${ing}</div>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>Steps</h3>
+                    <div class="steps">
+                        ${recipe.steps.map((step, i) => `<div class="step">${step}</div>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="recipe-actions" style="justify-content: space-around;">
+                        <button class="btn fav ${favourites.includes(recipe.id) ? 'active' : ''}" onclick="toggleFavourite(${recipe.id})">
+                            ${favourites.includes(recipe.id) ? '❤️ Saved' : '🤍 Save'}
+                        </button>
+                        <button class="btn" onclick="addToShoppingList(${recipe.id})">🛒 Add All To List</button>
+                        <button class="btn" onclick="shareRecipe(${recipe.id})">📱 Share</button>
+                    </div>
+                </div>
+            `;
+
+            recipeModal.classList.add('active');
+
+            // Ingredient checkboxes
+            document.querySelectorAll('.ingredients .ingredient').forEach(ing => {
+                ing.addEventListener('click', () => ing.classList.toggle('checked'));
+            });
+
+            // Portions input
+            document.getElementById('portionsInput').addEventListener('change', updatePortions);
+        }
+
+        function closeModalFn() {
+            recipeModal.classList.remove('active');
+        }
+
+        function updatePortions() {
+            const portionsInput = document.getElementById('portionsInput');
+            currentPortions = parseInt(portionsInput.value) || 2;
+            const recipeId = document.querySelector('.ingredients').dataset.recipeId;
+            showRecipeModal(recipeId);
+        }
+
+        function toggleFavourite(id) {
+            const index = favourites.indexOf(id);
+            if (index > -1) {
+                favourites.splice(index, 1);
+            } else {
+                favourites.push(id);
+            }
+            localStorage.setItem('favourites', JSON.stringify(favourites));
+            renderRecipes();
+        }
+
+        function addToShoppingList(id) {
+            const recipe = recipes.find(r => r.id === id);
+            if (!recipe) return;
+
+            // Group ingredients by category (simple regex)
+            const groups = {
+                meat: [],
+                veg: [],
+                grains: [],
+                other: []
+            };
+
+            recipe.ingredients.forEach(ing => {
+                if (ing.match(/chicken|beef|turkey|salmon|meat|fish/i)) groups.meat.push(ing);
+                else if (ing.match(/broccoli|spinach|pepper|courgette|potato|veg|onion|garlic|cucumber/i)) groups.veg.push(ing);
+                else if (ing.match(/rice|tagliatelle|pasta|grain/i)) groups.grains.push(ing);
+                else groups.other.push(ing);
+            });
+
+            shoppingList.push({
+                recipe: recipe.title,
+                groups
+            });
+
+            alert(`${recipe.title} added to shopping list!`);
+        }
+
+        function toggleShoppingList() {
+            if (shoppingList.length === 0) {
+                alert('No recipes added to shopping list yet!');
+                return;
+            }
+
+            const listHtml = shoppingList.map((item, i) => `
+                <div class="shopping-group">
+                    <h4>${item.recipe}</h4>
+                    ${Object.entries(item.groups).map(([cat, items]) => items.length ? `
+                        <div>
+                            <strong>${cat.toUpperCase()}:</strong>
+                            ${items.map(ing => `<span style="display:block;">☐ ${ing}</span>`).join('')}
+                        </div>
+                    ` : '').join('')}
+                </div>
+            `).join('');
+
+            modalContent.innerHTML = `
+                <div class="shopping-list">
+                    <h3>🛒 Your Shopping List</h3>
+                    ${listHtml}
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="btn" onclick="clearShoppingList()">Clear List</button>
+                    </div>
+                </div>
+            `;
+            modalTitle.textContent = 'Shopping List';
+            recipeModal.classList.add('active');
+        }
+
+        function clearShoppingList() {
+            shoppingList = [];
+            closeModalFn();
+        }
+
+        function shareRecipe(id) {
+            const recipe = recipes.find(r => r.id === id);
+            if (navigator.share) {
+                navigator.share({
+                    title: recipe.title,
+                    text: `Check out ${recipe.title} from Rowing Recipes!`,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(`${recipe.title}: ${recipe.ingredients.join(', ')}`);
+                alert('Recipe copied to clipboard!');
+            }
+        }
+
+        // Debounce utility
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // PWA install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            deferredPrompt = e;
+        });
+    </script>
 </body>
 </html>
